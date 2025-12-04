@@ -163,15 +163,30 @@
             border-radius: 4px;
         }
 
-        /* Custom Thumb for clarity */
+        /* Custom Thumb for clarity (Uber Car/Logo look) */
         input[type=range][orient=vertical]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            /* Wider thumb for car shape */
+            height: 10px;
+            margin-top: -5px;
+
             background: var(--uber-black);
-            border: 2px solid var(--uber-white);
-            border-radius: 50%;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            border: 3px solid var(--uber-white);
+            border-radius: 2px;
+            /* Geometric corners */
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Firefox Support for the custom thumb */
+        input[type=range][orient=vertical]::-moz-range-thumb {
+            width: 20px;
+            height: 10px;
+            background: var(--uber-black);
+            border: 3px solid var(--uber-white);
+            border-radius: 2px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+            cursor: ns-resize;
         }
 
 
@@ -436,11 +451,11 @@
 
     <script>
         // ==========================================
-        // 1. INITIALIZATION & SETUP
+        // 1. INITIALIZATION & SETUP (Revised for robustness)
         // ==========================================
 
-        if (typeof ATLAS_DATA === 'undefined') {
-            document.getElementById('displayTitle').innerText = "ERROR: Data not loaded.";
+        if (typeof ATLAS_DATA === 'undefined' || !ATLAS_DATA.dates || ATLAS_DATA.dates.length === 0) {
+            document.getElementById('displayTitle').innerText = "ERROR: Data payload (data_payload.js) not loaded or empty.";
             return;
         }
 
@@ -453,15 +468,25 @@
         const allDates = ATLAS_DATA.dates;
         const numRows = allDates.length;
 
+        // Check if features exist
+        const features = Object.keys(ATLAS_DATA.features).sort();
+        if (features.length === 0) {
+            document.getElementById('displayTitle').innerText = "ERROR: No common features found in the datasets.";
+            return;
+        }
+
         // Set Scrubber Range based on data length
         rowScrubber.max = numRows;
         rowScrubber.step = 1;
 
-        // Populate Dropdown & Set Default
-        const features = Object.keys(ATLAS_DATA.features).sort();
+        // Set initial scrubber value: Start at full RAW (index = numRows)
+        rowScrubber.value = numRows;
+
+
+        // Populate Dropdown & Set Default (base_passenger_fare)
         let defaultFeature = 'base_passenger_fare';
         if (!features.includes(defaultFeature)) {
-            defaultFeature = features[0];
+            defaultFeature = features[0]; // Fallback to first feature
         }
 
         features.forEach(feat => {
@@ -473,9 +498,6 @@
                 opt.selected = true;
             }
         });
-
-        // Set initial scrubber value: Start at full RAW (index = numRows)
-        rowScrubber.value = numRows;
 
         // Update Scrubber Date Labels
         document.getElementById('topBoundary').innerText = allDates[0];
@@ -620,11 +642,10 @@
         featureSelect.addEventListener('change', render);
         rowScrubber.addEventListener('input', render);
 
-        // Initial setup for default feature
+        // Initial Render
         if (numRows > 0) {
             render();
         }
-
     </script>
 </body>
 
