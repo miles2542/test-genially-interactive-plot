@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Card Styling */
+        .feature-card {
+            background: rgba(22, 22, 22, 0.6);
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: #47B275;
+            background: rgba(22, 22, 22, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(71, 178, 117, 0.15);
+        }
+
+        /* Tag Styling */
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .feature-name {
+            color: #e5e7eb;
+            font-size: 11px;
+        }
+
+        .feature-card:hover .feature-name {
+            color: #ffffff;
+        }
+
+        /* Header Accent Line */
+        .accent-line {
+            height: 2px;
+            width: 24px;
+            background: #333;
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        .feature-card:hover .accent-line {
+            width: 100%;
+            background: #47B275;
+        }
+
+        /* Background Grid */
+        .bg-grid {
+            background-image:
+                linear-gradient(to right, #1a1a1a 1px, transparent 1px),
+                linear-gradient(to bottom, #1a1a1a 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+        }
+    </style>
+</head>
+
+<body class="flex flex-col items-center justify-center h-screen w-screen p-8 relative">
+
+    <!-- Background -->
+    <div class="absolute inset-0 bg-grid -z-10"></div>
+
+    <!-- Header Section -->
+    <div class="w-full max-w-[1100px] mb-8 flex justify-between items-end">
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <span
+                    class="px-2 py-0.5 bg-gray-800 text-[10px] font-bold text-gray-400 rounded uppercase tracking-wider">Step
+                    3</span>
+                <span class="text-[10px] text-uber-green font-mono">PROCESSING COMPLETE</span>
+            </div>
+            <h1 class="text-4xl font-bold tracking-tight">The Feature Factory</h1>
+            <p class="text-gray-400 text-sm mt-1">Transforming raw signals into 70 engineered attributes across 6
+                domains.</p>
+        </div>
+        <div class="text-right">
+            <div class="text-3xl font-mono font-bold text-white">70</div>
+            <div class="text-[10px] text-gray-500 uppercase tracking-widest">Total Features</div>
+        </div>
+    </div>
+
+    <!-- Main Grid: 3x2 -->
+    <div class="w-full max-w-[1100px] grid grid-cols-3 gap-4 h-auto">
+
+        <!-- CARD 1: TEMPORAL -->
+        <div class="feature-card rounded-lg p-5 flex flex-col h-full">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <div class="accent-line mb-2"></div>
+                    <h3 class="font-bold text-lg text-gray-200">Temporal</h3>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-wider">Human & Machine Time</p>
+                </div>
+                <span class="text-[10px] bg-gray-800 px-2 py-1 rounded text-gray-300 font-mono">17</span>
+            </div>
+            <div class="mt-auto space-y-1 font-mono">
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span><span
+                        class="feature-name">cultural_day_type</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span><span
+                        class="feature-name">time_of_day_bin</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span><span
+                        class="feature-name">pandemic_phase</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-gray-600"></span><span
+                        class="feature-name text-gray-500 italic">+ 14 cyclical/raw</span></div>
+            </div>
+        </div>
+
+        <!-- CARD 2: GEOSPATIAL -->
+        <div class="feature-card rounded-lg p-5 flex flex-col h-full">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <div class="accent-line mb-2"></div>
+                    <h3 class="font-bold text-lg text-gray-200">Geospatial</h3>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-wider">Location Context</p>
+                </div>
+                <span class="text-[10px] bg-gray-800 px-2 py-1 rounded text-gray-300 font-mono">10</span>
+            </div>
+            <div class="mt-auto space-y-1 font-mono">
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span><span
+                        class="feature-name">borough_flow</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span><span
+                        class="feature-name">trip_archetype</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span><span
+                        class="feature-name">trip_type_zone</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-gray-600"></span><span
+                        class="feature-name text-gray-500 italic">+ 7 coord metrics</span></div>
+            </div>
+        </div>
+
+        <!-- CARD 3: PHYSICS -->
+        <div class="feature-card rounded-lg p-5 flex flex-col h-full">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <div class="accent-line mb-2"></div>
+                    <h3 class="font-bold text-lg text-gray-200">Physics</h3>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-wider">Motion & Efficiency</p>
+                </div>
+                <span class="text-[10px] bg-gray-800 px-2 py-1 rounded text-gray-300 font-mono">11</span>
+            </div>
+            <div class="mt-auto space-y-1 font-mono">
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span><span
+                        class="feature-name">tortuosity_index</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span><span
+                        class="feature-name">displacement_speed</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span><span
+                        class="feature-name">total_wait_time</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-gray-600"></span><span
+                        class="feature-name text-gray-500 italic">+ 8 motion metrics</span></div>
+            </div>
+        </div>
+
+        <!-- CARD 4: ECONOMICS -->
+        <div class="feature-card rounded-lg p-5 flex flex-col h-full">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <div class="accent-line mb-2"></div>
+                    <h3 class="font-bold text-lg text-gray-200">Economics</h3>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-wider">The Wallet War</p>
+                </div>
+                <span class="text-[10px] bg-gray-800 px-2 py-1 rounded text-gray-300 font-mono">17</span>
+            </div>
+            <div class="mt-auto space-y-1 font-mono">
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span><span
+                        class="feature-name">total_rider_cost</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span><span
+                        class="feature-name">uber_take_rate</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span><span
+                        class="feature-name">driver_pay_hr</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-gray-600"></span><span
+                        class="feature-name text-gray-500 italic">+ 14 financial tags</span></div>
+            </div>
+        </div>
+
+        <!-- CARD 5: FLAGS -->
+        <div class="feature-card rounded-lg p-5 flex flex-col h-full">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <div class="accent-line mb-2"></div>
+                    <h3 class="font-bold text-lg text-gray-200">Service Flags</h3>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-wider">Binary Indicators</p>
+                </div>
+                <span class="text-[10px] bg-gray-800 px-2 py-1 rounded text-gray-300 font-mono">5</span>
+            </div>
+            <div class="mt-auto space-y-1 font-mono">
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span><span
+                        class="feature-name">wav_request</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span><span
+                        class="feature-name">shared_match</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span><span
+                        class="feature-name">is_subsidized</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-gray-600"></span><span
+                        class="feature-name text-gray-500 italic">+ 2 status flags</span></div>
+            </div>
+        </div>
+
+        <!-- CARD 6: WEATHER -->
+        <div class="feature-card rounded-lg p-5 flex flex-col h-full">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <div class="accent-line mb-2"></div>
+                    <h3 class="font-bold text-lg text-gray-200">Weather</h3>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-wider">Environment</p>
+                </div>
+                <span class="text-[10px] bg-gray-800 px-2 py-1 rounded text-gray-300 font-mono">10</span>
+            </div>
+            <div class="mt-auto space-y-1 font-mono">
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span><span
+                        class="feature-name">weather_state</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span><span
+                        class="feature-name">is_extreme_weather</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span><span
+                        class="feature-name">snow_intensity</span></div>
+                <div class="feature-item"><span class="w-1.5 h-1.5 rounded-full bg-gray-600"></span><span
+                        class="feature-name text-gray-500 italic">+ 7 hourly metrics</span></div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
