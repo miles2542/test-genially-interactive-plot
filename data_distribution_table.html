@@ -4,14 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uber Data Atlas | Executive View</title>
+    <title>Uber Data Atlas | Executive Scrubber View</title>
 
     <!-- FONTS: Inter (Standard for modern UI) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- DATA SOURCE -->
     <script src="data_payload.js"></script>
-    <!-- If not using external file, remove line above and paste content inside <script> below -->
 
     <style>
         /* =========================================
@@ -21,13 +20,12 @@
             /* Palette */
             --uber-black: #000000;
             --uber-white: #FFFFFF;
-            --uber-green: #276EF1;
-            /* Uber Blue for UI, Green for Data */
             --data-green: #47B275;
-            --data-green-light: rgba(71, 178, 117, 0.15);
+            /* Primary Positive */
             --data-red: #F25138;
-            --data-red-light: rgba(242, 81, 56, 0.15);
+            /* Critical/Alert */
             --data-orange: #FF7D49;
+            /* Warning/Raw safe range */
 
             /* Grays */
             --gray-100: #F6F6F6;
@@ -37,7 +35,6 @@
 
             /* Dimensions */
             --sidebar-width: 260px;
-            --header-height: 40px;
         }
 
         * {
@@ -52,7 +49,7 @@
             height: 100vh;
             display: flex;
             overflow: hidden;
-            /* Prevent body scroll, use inner containers */
+            color: var(--uber-black);
         }
 
         /* =========================================
@@ -66,7 +63,6 @@
             flex-direction: column;
             padding: 24px;
             z-index: 20;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
         }
 
         .brand {
@@ -80,13 +76,19 @@
             gap: 8px;
         }
 
+        .brand svg rect:last-child {
+            fill: var(--data-green);
+        }
+
+        /* Green cube for Data Prep focus */
+
         /* DROPDOWN STYLING */
         .control-group {
             margin-bottom: 40px;
         }
 
         .label {
-            font-size: 11px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             font-weight: 600;
@@ -99,7 +101,8 @@
             width: 100%;
             padding: 10px 12px;
             font-family: 'Inter', sans-serif;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: 500;
             border: 1px solid var(--gray-300);
             border-radius: 4px;
             background: var(--uber-white);
@@ -109,76 +112,92 @@
             transition: border-color 0.2s;
         }
 
-        select:hover {
-            border-color: var(--gray-600);
-        }
-
         select:focus {
             border-color: var(--uber-black);
         }
 
+        /* Scrubber Info */
+        .scrubber-info {
+            background: var(--gray-100);
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .scrubber-info strong {
+            font-weight: 700;
+        }
+
+        .scrubber-info .raw {
+            color: var(--data-red);
+            font-weight: 700;
+        }
+
+        .scrubber-info .filtered {
+            color: var(--data-green);
+            font-weight: 700;
+        }
+
         /* VERTICAL SLIDER CONTAINER */
         .scrubber-container {
-            flex-grow: 1;
             display: flex;
-            flex-direction: row;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
             justify-content: center;
-            position: relative;
-            background: var(--gray-100);
-            border-radius: 8px;
-            padding: 20px 0;
+            padding: 0 10px;
+            height: 250px;
         }
 
-        /* The Custom Vertical Slider */
+        /* The Custom Vertical Slider Track */
         input[type=range][orient=vertical] {
             writing-mode: bt-lr;
-            /* IE/Edge */
             -webkit-appearance: slider-vertical;
-            /* Chrome/Safari */
             width: 8px;
-            height: 200px;
-            padding: 0 5px;
+            height: 100%;
+            padding: 0;
             cursor: ns-resize;
+            background: var(--gray-300);
+            border-radius: 4px;
         }
 
-        /* Fallback / Custom styling for slider track if needed can go here, 
-           but native vertical slider is usually smoothest for this specific interaction */
+        /* Custom Thumb for clarity */
+        input[type=range][orient=vertical]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--uber-black);
+            border: 2px solid var(--uber-white);
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
 
         .scrubber-labels {
-            height: 200px;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            font-size: 11px;
-            font-weight: 600;
-            text-align: left;
-            padding-right: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: right;
         }
 
-        .state-label {
+        .scrubber-labels span {
+            padding: 2px 0;
             transition: color 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .state-raw {
-            color: var(--gray-300);
-        }
-
-        .state-proc {
-            color: var(--gray-300);
-        }
-
-        /* Dynamic Active States */
-        .mode-raw .state-raw {
+        .scrubber-labels .raw-label {
             color: var(--data-red);
         }
 
-        .mode-proc .state-proc {
+        .scrubber-labels .filtered-label {
             color: var(--data-green);
         }
+
 
         /* Footer */
         .footer {
@@ -198,64 +217,41 @@
             display: flex;
             flex-direction: column;
             background: var(--uber-white);
-            position: relative;
         }
 
         /* HEADER INFO */
         .info-bar {
-            padding: 20px 32px;
-            border-bottom: 1px solid var(--gray-300);
+            padding: 24px 32px 10px 32px;
             background: var(--uber-white);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
+            border-bottom: 2px solid var(--gray-300);
+            /* Separator line */
         }
 
         .metric-title {
-            font-size: 24px;
-            font-weight: 500;
+            font-size: 32px;
+            font-weight: 700;
             color: var(--uber-black);
             margin: 0;
+            letter-spacing: -0.5px;
         }
 
         .metric-subtitle {
-            font-size: 13px;
+            font-size: 16px;
+            font-weight: 400;
             color: var(--gray-600);
             margin-top: 4px;
+            margin-bottom: 12px;
         }
-
-        .status-badge {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Status Badge Colors */
-        .mode-raw .status-badge {
-            background: var(--data-red-light);
-            color: var(--data-red);
-        }
-
-        .mode-proc .status-badge {
-            background: var(--data-green-light);
-            color: var(--data-green);
-        }
-
 
         /* TABLE SCROLL AREA */
         .table-wrapper {
             flex-grow: 1;
             overflow: auto;
-            /* Both X and Y scroll */
             position: relative;
         }
 
         table {
             border-collapse: separate;
-            /* Required for sticky to work well with borders */
             border-spacing: 0;
             width: 100%;
             font-size: 13px;
@@ -267,19 +263,16 @@
             top: 0;
             z-index: 10;
             background: var(--gray-100);
-            color: var(--gray-600);
-            font-weight: 600;
-            font-size: 10px;
+            color: var(--uber-black);
+            font-weight: 700;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             padding: 10px 12px;
             text-align: right;
             border-bottom: 1px solid var(--gray-300);
-            border-right: 1px solid transparent;
-            /* Gutter */
         }
 
-        /* Sticky First Column (Date) */
         th:first-child {
             position: sticky;
             left: 0;
@@ -292,16 +285,15 @@
 
         /* TABLE CELLS */
         td {
-            padding: 6px 12px;
+            padding: 8px 12px;
             text-align: right;
             white-space: nowrap;
             border-bottom: 1px solid var(--gray-100);
             color: var(--uber-black);
             font-variant-numeric: tabular-nums;
-            /* Monospaced numbers */
+            transition: background-color 0.2s, color 0.2s;
         }
 
-        /* Sticky First Column (Date) */
         td:first-child {
             position: sticky;
             left: 0;
@@ -309,7 +301,7 @@
             text-align: left;
             background: var(--uber-white);
             font-weight: 500;
-            font-size: 12px;
+            font-size: 13px;
             border-right: 2px solid var(--uber-black);
         }
 
@@ -321,31 +313,39 @@
             background-color: #FAFAFA;
         }
 
-        /* =========================================
-           4. VISUALIZATION HELPERS (Dynamic)
-           ========================================= */
+        /* BOUNDARY LINE (The Horizontal Scrubber) */
+        tr.boundary-row td {
+            border-top: 2px solid var(--uber-black) !important;
+        }
 
-        /* Transition effect for cells when scrubbing */
-        td {
-            transition: background-color 0.2s, color 0.2s;
+        /* Dynamic Visual Styles for Raw vs Filtered */
+        .raw-data-style {
+            color: var(--data-red);
+            opacity: 0.9;
+        }
+
+        .filtered-data-style {
+            color: var(--uber-black);
+            opacity: 1.0;
         }
 
         /* Highlight classes */
+        .val-mean,
+        .val-max {
+            border-left: 1px solid var(--gray-300);
+        }
+
         .val-mean {
             font-weight: 600;
-            color: var(--uber-black);
-            border-left: 1px solid var(--gray-300);
         }
 
         .val-max {
             font-weight: 600;
-            color: var(--uber-black);
-            border-left: 1px solid var(--gray-300);
         }
     </style>
 </head>
 
-<body class="mode-raw"> <!-- Default State -->
+<body>
 
     <!-- SIDEBAR -->
     <div class="sidebar">
@@ -354,7 +354,7 @@
                 <rect x="2" y="2" width="9" height="9" fill="black" />
                 <rect x="13" y="2" width="9" height="9" fill="black" />
                 <rect x="2" y="13" width="9" height="9" fill="black" />
-                <rect x="13" y="13" width="9" height="9" fill="#47B275" /> <!-- Green accent for prep -->
+                <rect x="13" y="13" width="9" height="9" fill="#47B275" />
             </svg>
             Data Atlas
         </div>
@@ -366,17 +366,28 @@
             </select>
         </div>
 
-        <div class="label" style="text-align: center; margin-bottom: 10px;">Scrub Data State</div>
+        <div class="scrubber-info">
+            <strong>Data Scrubber Mode:</strong>
+            <p style="margin-top: 8px;">Rows <span class="raw">ABOVE</span> the boundary display <span
+                    class="raw">RAW</span> data.</p>
+            <p>Rows <span class="filtered">BELOW</span> the boundary display <span class="filtered">FILTERED</span>
+                data.</p>
+        </div>
 
+        <div class="label" style="text-align: center; margin-bottom: 10px;">Boundary Control</div>
         <div class="scrubber-container">
             <div class="scrubber-labels">
-                <span class="state-label state-raw">Raw<br>Input</span>
-                <span class="state-label state-proc">Refined<br>Output</span>
+                <span class="raw-label">RAW (ALL)</span>
+                <span></span>
+                <span class="filtered-label">FILTERED (ALL)</span>
             </div>
-            <!-- Vertical Slider: 0 = Raw (Top), 1 = Processed (Bottom) -->
-            <!-- Note: standard range input is Min(Left/Bottom) to Max(Right/Top) -->
-            <!-- We will handle logic in JS: 0=Proc, 1=Raw, or visual inversion -->
-            <input type="range" id="stateSlider" min="0" max="1" step="1" value="0" orient="vertical">
+            <!-- Vertical Slider: min=0 (Filtered/Bottom), max=NumRows (Raw/Top) -->
+            <input type="range" id="rowScrubber" min="0" orient="vertical">
+            <div class="scrubber-labels">
+                <span class="raw-label" id="topBoundary">Feb 2019</span>
+                <span style="visibility: hidden">mid</span>
+                <span class="filtered-label" id="bottomBoundary">Sep 2025</span>
+            </div>
         </div>
 
         <div class="footer">
@@ -391,9 +402,9 @@
         <div class="info-bar">
             <div>
                 <h1 class="metric-title" id="displayTitle">Loading...</h1>
-                <div class="metric-subtitle">Monthly Statistical Distribution</div>
+                <div class="metric-subtitle">Monthly Statistical Distribution - Boundary: <span id="boundaryInfo">All
+                        Raw Data</span></div>
             </div>
-            <div id="statusBadge" class="status-badge">RAW DATA</div>
         </div>
 
         <div class="table-wrapper">
@@ -402,7 +413,7 @@
                     <tr>
                         <th>Audit Month</th>
                         <th>Total Rows</th>
-                        <!-- Distribution Group -->
+                        <!-- Safe/Distribution Group -->
                         <th>MIN</th>
                         <th>P01</th>
                         <th>P50</th>
@@ -428,76 +439,91 @@
         // 1. INITIALIZATION & SETUP
         // ==========================================
 
-        // Ensure data is loaded
         if (typeof ATLAS_DATA === 'undefined') {
-            alert("Error: data_payload.js not found. Please ensure the file is in the same directory.");
+            document.getElementById('displayTitle').innerText = "ERROR: Data not loaded.";
+            return;
         }
 
         const featureSelect = document.getElementById('featureSelect');
-        const stateSlider = document.getElementById('stateSlider');
+        const rowScrubber = document.getElementById('rowScrubber');
         const tableBody = document.getElementById('tableBody');
         const displayTitle = document.getElementById('displayTitle');
-        const statusBadge = document.getElementById('statusBadge');
-        const bodyTag = document.body;
+        const boundaryInfo = document.getElementById('boundaryInfo');
 
-        // Populate Dropdown
+        const allDates = ATLAS_DATA.dates;
+        const numRows = allDates.length;
+
+        // Set Scrubber Range based on data length
+        rowScrubber.max = numRows;
+        rowScrubber.step = 1;
+
+        // Populate Dropdown & Set Default
         const features = Object.keys(ATLAS_DATA.features).sort();
+        let defaultFeature = 'base_passenger_fare';
+        if (!features.includes(defaultFeature)) {
+            defaultFeature = features[0];
+        }
+
         features.forEach(feat => {
             const opt = document.createElement('option');
             opt.value = feat;
             opt.text = feat.replace(/_/g, " ").toUpperCase();
             featureSelect.appendChild(opt);
+            if (feat === defaultFeature) {
+                opt.selected = true;
+            }
         });
+
+        // Set initial scrubber value: Start at full RAW (index = numRows)
+        rowScrubber.value = numRows;
+
+        // Update Scrubber Date Labels
+        document.getElementById('topBoundary').innerText = allDates[0];
+        document.getElementById('bottomBoundary').innerText = allDates[numRows - 1];
+
 
         // ==========================================
         // 2. HELPER FUNCTIONS (VISUALIZATION)
         // ==========================================
 
-        // Format Numbers: 1,234.56
-        const fmt = new Intl.NumberFormat('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-
-        // Format Integers: 1,234
-        const fmtInt = new Intl.NumberFormat('en-US', {
-            maximumFractionDigits: 0
-        });
+        const fmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const fmtInt = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 
         /**
          * Generates the background style string
          * @param {number} val - The cell value
          * @param {number} maxVal - The GLOBAL MAX for this column (scaling factor)
-         * @param {string} type - 'blue-grad', 'red-grad', 'bar'
-         * @param {boolean} isProcessed - true if clean data (Green), false if raw (Red/Orange)
+         * @param {string} type - 'safe', 'risk', 'bar'
+         * @param {boolean} isFiltered - true if filtered data (Green), false if raw (Red/Orange)
          */
-        function getStyle(val, maxVal, type, isProcessed) {
+        function getStyle(val, maxVal, type, isFiltered) {
             if (val === null || val === undefined) return '';
 
             const absVal = Math.abs(val);
             const ratio = Math.min(absVal / maxVal, 1);
             const pct = ratio * 100;
 
-            // COLOR PALETTE LOGIC
-            // Raw (False) = Red/Orange/Blue mix (Chaotic)
-            // Processed (True) = Green/Clean
+            let barColor = isFiltered ? 'var(--data-green)' : 'var(--data-red)';
+            let gradColor = isFiltered ? `rgba(71, 178, 117, ${ratio * 0.3})` : `rgba(242, 81, 56, ${ratio * 0.4})`;
 
-            let colorBase;
+            if (type === 'bar') {
+                // Ensure bars for MAX use the critical color in RAW mode
+                if (!isFiltered) barColor = 'var(--data-red)';
 
-            if (isProcessed) {
-                // CLEAN MODE: Greens
-                if (type === 'risk') colorBase = `rgba(71, 178, 117, ${ratio * 0.5})`; // Green tint
-                if (type === 'safe') colorBase = `rgba(39, 110, 241, ${ratio * 0.4})`; // Uber Blue tint
-                if (type === 'bar') return `background: linear-gradient(90deg, #47B275 ${pct}%, transparent ${pct}%)`;
-            } else {
-                // RAW MODE: Reds/Oranges
-                if (type === 'risk') colorBase = `rgba(242, 81, 56, ${ratio * 0.6})`; // Red tint
-                if (type === 'safe') colorBase = `rgba(93, 165, 218, ${ratio * 0.4})`; // Blue tint
-                if (type === 'bar') return `background: linear-gradient(90deg, #F25138 ${pct}%, transparent ${pct}%)`;
+                return `background: linear-gradient(90deg, ${barColor} ${pct}%, transparent ${pct}%)`;
             }
 
-            // Return gradient style for cells
-            return `background-color: ${colorBase}`;
+            if (type === 'safe' && !isFiltered) {
+                // Raw safe stats (MIN/P01/P50): Use Orange tint to signal caution/noise
+                gradColor = `rgba(255, 125, 73, ${ratio * 0.3})`;
+            }
+            if (type === 'risk' && isFiltered) {
+                // Filtered risk stats (STD/P99): Use muted red/green combo if standard deviation is high even after filter
+                gradColor = `rgba(71, 178, 117, ${ratio * 0.3})`;
+            }
+
+            // Return gradient style for cells (risk/safe columns)
+            return `background-color: ${gradColor}`;
         }
 
         // ==========================================
@@ -506,50 +532,48 @@
 
         function render() {
             const featName = featureSelect.value;
-            // Slider Logic: Range is 0 to 1. 
-            // 0 = RAW (Top visually, depends on CSS orient). 
-            // In standard slider vertical: Bottom is Min, Top is Max.
-            // Let's assume input value 1 = Top (Raw), 0 = Bottom (Processed).
-            // Actually, usually vertical sliders have min at bottom. 
-            // Let's check value. We want Drag DOWN to Clean.
-            // So Top (Max value) = Raw. Bottom (Min value) = Processed.
-
-            // Slider Value: 0 (Proc) -> 1 (Raw)
-            // wait, HTML says min=0 max=1.
-            // Let's treat value "1" as RAW (Top) and "0" as PROCESSED (Bottom)
-            // So dragging slider down reduces value to 0.
-
-            const sliderVal = parseInt(stateSlider.value);
-            const isRaw = (sliderVal === 1);
-            const isProcessed = !isRaw;
-
-            const dataSetKey = isRaw ? 'raw' : 'processed';
+            // boundaryIndex: number of rows displaying RAW data (0 to numRows)
+            const boundaryIndex = parseInt(rowScrubber.value);
             const featData = ATLAS_DATA.features[featName];
-            const currentData = featData[dataSetKey];
-            const stats = featData.stats; // Global Maxes
+            const stats = featData.stats;
 
-            // Update UI State
-            if (isRaw) {
-                bodyTag.classList.remove('mode-proc');
-                bodyTag.classList.add('mode-raw');
-                statusBadge.innerText = "RAW INPUT (DIRTY)";
-                displayTitle.innerText = featName.replace(/_/g, " ").toUpperCase(); // + " (RAW)";
+            // Update Header Title
+            displayTitle.innerText = featName.replace(/_/g, " ").toUpperCase();
+
+            // Update Boundary Info text
+            let currentModeText = "";
+            if (boundaryIndex === 0) {
+                currentModeText = "All Filtered Data (Boundary at top)";
+            } else if (boundaryIndex === numRows) {
+                currentModeText = "All Raw Data (Boundary at bottom)";
             } else {
-                bodyTag.classList.remove('mode-raw');
-                bodyTag.classList.add('mode-proc');
-                statusBadge.innerText = "REFINED OUTPUT (CLEAN)";
-                displayTitle.innerText = featName.replace(/_/g, " ").toUpperCase(); // + " (CLEAN)";
+                currentModeText = `Boundary set AFTER ${allDates[boundaryIndex - 1]} (${boundaryIndex} Raw Rows)`;
             }
+            boundaryInfo.innerText = currentModeText;
 
             // Clear Table
             tableBody.innerHTML = '';
 
             // Generate Rows
             ATLAS_DATA.dates.forEach((date, i) => {
+
+                // Determine which dataset to use for this row
+                // If index 'i' is less than the boundary index, use RAW
+                const isRawRow = (i < boundaryIndex);
+                const isFilteredRow = !isRawRow;
+                const dataSetKey = isRawRow ? 'raw' : 'processed';
+                const data = featData[dataSetKey];
+
                 const tr = document.createElement('tr');
 
+                // Add boundary class for visual separation
+                // The boundary line should appear *above* the first FILTERED row
+                if (i === boundaryIndex) {
+                    tr.classList.add('boundary-row');
+                }
+
                 // Helper to get value safely
-                const getVal = (suffix) => currentData[suffix] ? currentData[suffix][i] : 0;
+                const getVal = (suffix) => data[suffix] ? data[suffix][i] : 0;
 
                 // Values
                 const v_min = getVal('min');
@@ -560,23 +584,29 @@
                 const v_p99 = getVal('p99');
                 const v_p999 = getVal('p99.9');
                 const v_max = getVal('max');
-                const v_rows = currentData['rows'] ? currentData['rows'][i] : 0;
+                const v_rows = data['rows'] ? data['rows'][i] : 0;
+
+                // Apply base style based on state (for text color/font style)
+                const baseClass = isRawRow ? 'raw-data-style' : 'filtered-data-style';
+
+                // MAX bar color needs explicit setting to match text color for MAX
+                let maxBarTextColor = isRawRow ? 'var(--data-red)' : 'var(--data-green)';
 
                 tr.innerHTML = `
                     <td>${date}</td>
-                    <td style="color: var(--gray-600)">${fmtInt.format(v_rows)}</td>
+                    <td class="${baseClass}" style="color: var(--gray-600); opacity: ${isRawRow ? 0.9 : 1.0}">${fmtInt.format(v_rows)}</td>
                     
-                    <td style="${getStyle(v_min, stats.min_max, 'safe', isProcessed)}">${fmt.format(v_min)}</td>
-                    <td style="${getStyle(v_p01, stats.p01_max, 'safe', isProcessed)}">${fmt.format(v_p01)}</td>
-                    <td style="${getStyle(v_p50, stats.p50_max, 'safe', isProcessed)}">${fmt.format(v_p50)}</td>
+                    <td class="${baseClass}" style="${getStyle(v_min, stats.min_max, 'safe', isFilteredRow)}">${fmt.format(v_min)}</td>
+                    <td class="${baseClass}" style="${getStyle(v_p01, stats.p01_max, 'safe', isFilteredRow)}">${fmt.format(v_p01)}</td>
+                    <td class="${baseClass}" style="${getStyle(v_p50, stats.p50_max, 'safe', isFilteredRow)}">${fmt.format(v_p50)}</td>
                     
-                    <td class="val-mean" style="${getStyle(v_mean, stats.mean_max, 'bar', isProcessed)}">${fmt.format(v_mean)}</td>
+                    <td class="val-mean ${baseClass}" style="${getStyle(v_mean, stats.mean_max, 'bar', isFilteredRow)}">${fmt.format(v_mean)}</td>
                     
-                    <td style="border-left: 1px solid var(--gray-300); ${getStyle(v_std, stats.std_max, 'risk', isProcessed)}">${fmt.format(v_std)}</td>
-                    <td style="${getStyle(v_p99, stats.p99_max, 'risk', isProcessed)}">${fmt.format(v_p99)}</td>
-                    <td style="${getStyle(v_p999, stats.p999_max, 'risk', isProcessed)}">${fmt.format(v_p999)}</td>
+                    <td class="${baseClass}" style="border-left: 1px solid var(--gray-300); ${getStyle(v_std, stats.std_max, 'risk', isFilteredRow)}">${fmt.format(v_std)}</td>
+                    <td class="${baseClass}" style="${getStyle(v_p99, stats.p99_max, 'risk', isFilteredRow)}">${fmt.format(v_p99)}</td>
+                    <td class="${baseClass}" style="${getStyle(v_p999, stats.p999_max, 'risk', isFilteredRow)}">${fmt.format(v_p999)}</td>
                     
-                    <td class="val-max" style="${getStyle(v_max, stats.max_max, 'bar', isProcessed)}">${fmtInt.format(v_max)}</td>
+                    <td class="val-max ${baseClass}" style="${getStyle(v_max, stats.max_max, 'bar', isFilteredRow)}; color: ${maxBarTextColor};">${fmtInt.format(v_max)}</td>
                 `;
 
                 tableBody.appendChild(tr);
@@ -588,15 +618,12 @@
         // ==========================================
 
         featureSelect.addEventListener('change', render);
+        rowScrubber.addEventListener('input', render);
 
-        stateSlider.addEventListener('input', render);
-
-        // Initial set: Set slider to Top (1 = Raw) by default? Or Processed?
-        // Let's start with RAW (1) so they can scrub down to Clean (0)
-        stateSlider.value = 1;
-
-        // Init
-        render();
+        // Initial setup for default feature
+        if (numRows > 0) {
+            render();
+        }
 
     </script>
 </body>
